@@ -17,8 +17,8 @@ export default function PanelsStatic() {
           className="ps-grid relative grid w-[92%] max-w-md gap-1.5"
           style={{
             gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))`,
-            transform: "rotateX(52deg) rotateZ(-6deg) scale(1.15)",
-            transformStyle: "preserve-3d",
+            transform: "rotateX(40deg) rotateZ(-1deg) scale(1.02)",
+            willChange: "transform",
           }}
         >
           {Array.from({ length: COLS * ROWS }).map((_, i) => (
@@ -47,8 +47,14 @@ export default function PanelsStatic() {
             style={{
               background:
                 "linear-gradient(105deg, transparent 38%, rgba(255,226,160,0.5) 50%, transparent 62%)",
-              mixBlendMode: "screen",
               transform: "translateX(-120%)",
+            }}
+          />
+          <span
+            className="ps-glint pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(105deg, transparent 42%, rgba(255,235,190,0.28) 50%, transparent 58%)",
             }}
           />
         </div>

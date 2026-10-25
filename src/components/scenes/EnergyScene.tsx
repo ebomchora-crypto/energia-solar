@@ -61,16 +61,16 @@ export default function EnergyScene() {
       };
     });
 
-    // Mobile: CSS-perspective panel field settling into alignment, SVG energy
-    // lines drawing in; copy stays readable for the whole sequence.
+    // Mobile: CSS-perspective panel field. The array starts flat and scattered,
+    // tilts up and settles into alignment while the energy lines draw in.
     mm.add(`${MOBILE_MQ} and ${MOTION_OK}`, () => {
       const panels = q(".ps-panel");
       panels.forEach((el) => {
         gsap.set(el, {
-          x: gsap.utils.random(-14, 14),
-          y: gsap.utils.random(-22, 4),
-          rotate: gsap.utils.random(-9, 9),
-          opacity: 0.35,
+          x: gsap.utils.random(-22, 22),
+          y: gsap.utils.random(-34, 8),
+          rotate: gsap.utils.random(-14, 14),
+          opacity: 0.25,
         });
       });
 
@@ -80,23 +80,50 @@ export default function EnergyScene() {
           scrollTrigger: {
             trigger: section,
             start: "top top",
-            end: "+=95%",
-            scrub: 0.8,
+            end: "+=140%",
+            scrub: 0.6,
             pin: true,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },
         })
-        .to(warmRef.current, { opacity: 0, ease: "power1.out", duration: 0.25 }, 0)
-        .to(q(".ps-grid"), { rotateX: 40, rotateZ: -1, scale: 1.02, duration: 1 }, 0)
-        .to(panels, { x: 0, y: 0, rotate: 0, opacity: 1, ease: "power2.out", duration: 0.55, stagger: 0.015 }, 0.05)
-        .to(q(".ps-gloss"), { x: "240%", duration: 0.6 }, 0.35)
-        .to(q(".ps-line"), { strokeDashoffset: 0, duration: 0.4, stagger: 0.05 }, 0.55)
-        .fromTo(copy, { opacity: 0, y: 22 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.25, stagger: 0.06 }, 0.12);
+        .to(warmRef.current, { opacity: 0, ease: "power1.out", duration: 0.2 }, 0)
+        .fromTo(
+          q(".ps-grid"),
+          { rotateX: 68, rotateZ: -10, scale: 0.9 },
+          { rotateX: 38, rotateZ: -1, scale: 1.04, duration: 1 },
+          0
+        )
+        .to(panels, { x: 0, y: 0, rotate: 0, opacity: 1, ease: "power2.out", duration: 0.5, stagger: 0.02 }, 0.08)
+        .to(q(".ps-gloss"), { x: "240%", duration: 0.5 }, 0.4)
+        .to(q(".ps-line"), { strokeDashoffset: 0, duration: 0.3, stagger: 0.04 }, 0.5)
+        .fromTo(copy, { opacity: 0, y: 22 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.2, stagger: 0.05 }, 0.1);
     });
 
-    // Reduced motion: settled, static composition.
-    mm.add(MOTION_REDUCED, () => {
+    // Mobile + reduced motion: no pin, no spatial movement. The array is
+    // already in its final, aligned pose; only a short opacity/stroke reveal
+    // plays once when the scene enters the viewport.
+    mm.add(`${MOBILE_MQ} and ${MOTION_REDUCED}`, () => {
+      gsap.set(warmRef.current, { opacity: 0 });
+      gsap.set(copy, { opacity: 1, y: 0 });
+      gsap.fromTo(q(".ps-panel"), { opacity: 0.2 }, {
+        opacity: 1,
+        duration: 0.9,
+        stagger: 0.03,
+        ease: "power1.out",
+        scrollTrigger: { trigger: section, start: "top 70%", once: true },
+      });
+      gsap.fromTo(q(".ps-line"), { strokeDashoffset: 1 }, {
+        strokeDashoffset: 0,
+        duration: 1.1,
+        stagger: 0.08,
+        ease: "power1.inOut",
+        scrollTrigger: { trigger: section, start: "top 55%", once: true },
+      });
+    });
+
+    // Desktop + reduced motion: settled static WebGL composition.
+    mm.add(`${DESKTOP_MQ} and ${MOTION_REDUCED}`, () => {
       panelsProgress.value = 0.85;
       gsap.set(warmRef.current, { opacity: 0 });
       gsap.set(copy, { opacity: 1, y: 0 });

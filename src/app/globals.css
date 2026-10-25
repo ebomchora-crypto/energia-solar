@@ -165,6 +165,21 @@ html.lenis body {
   pointer-events: none;
 }
 
+@keyframes ps-glint {
+  0%, 12% { transform: translateX(-130%); }
+  60%, 100% { transform: translateX(130%); }
+}
+
+.ps-glint {
+  transform: translateX(-130%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ps-glint {
+    animation: ps-glint 5.5s ease-in-out infinite;
+  }
+}
+
 @keyframes flow-move {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(300%); }
