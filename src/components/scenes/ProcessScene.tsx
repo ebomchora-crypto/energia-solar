@@ -3,7 +3,8 @@
 import { useEffect, useRef } from "react";
 import { SearchCheck, Compass, HardHat, LifeBuoy } from "lucide-react";
 import { gsap, registerGsap } from "@/lib/gsap";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+
+const MOTION_OK = "(prefers-reduced-motion: no-preference)";
 
 const STEPS = [
   {
@@ -37,22 +38,20 @@ const STEPS = [
 ];
 
 export default function ProcessScene() {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     registerGsap();
-    if (!sectionRef.current) return;
+    const timeline = timelineRef.current;
+    if (!timeline) return;
+    const steps = stepRefs.current.filter(Boolean) as HTMLDivElement[];
 
-    if (reducedMotion) {
-      gsap.set(stepRefs.current, { opacity: 1, y: 0 });
-      gsap.set(lineRef.current, { scaleY: 1 });
-      return;
-    }
-
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia();
+    mm.add(MOTION_OK, () => {
+      // The connecting line fills as the timeline crosses the viewport centre.
       gsap.fromTo(
         lineRef.current,
         { scaleY: 0 },
@@ -61,82 +60,91 @@ export default function ProcessScene() {
           ease: "none",
           transformOrigin: "top",
           scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 65%",
-            end: "bottom 70%",
-            scrub: 0.6,
+            trigger: timeline,
+            start: "top 60%",
+            end: "bottom 65%",
+            scrub: 0.5,
           },
         }
       );
 
-      stepRefs.current.forEach((step) => {
+      steps.forEach((step) => {
         gsap.fromTo(
           step,
-          { opacity: 0, y: 40 },
+          { opacity: 0, y: 36 },
           {
             opacity: 1,
             y: 0,
             duration: 0.9,
             ease: "power3.out",
-            scrollTrigger: {
-              trigger: step,
-              start: "top 82%",
-            },
+            scrollTrigger: { trigger: step, start: "top 90%", once: true },
           }
         );
       });
-    }, sectionRef);
+    });
 
-    return () => ctx.revert();
-  }, [reducedMotion]);
+    return () => mm.revert();
+  }, []);
 
   return (
     <section
       id="tecnologia"
       ref={sectionRef}
-      className="relative overflow-hidden bg-bg-dark px-6 py-28 md:px-14 lg:px-20"
+      className="relative bg-bg-dark px-6 py-24 sm:px-10 lg:px-20 lg:py-36"
     >
-      <div className="mx-auto max-w-3xl text-center">
-        <p className="label-caps mb-4 text-solar">Como funciona</p>
-        <h2 className="font-display text-display-md text-balance text-text-light">
-          Tecnologia que transforma luz em resultado.
-        </h2>
-      </div>
-
-      <div className="relative mx-auto mt-24 max-w-2xl">
-        <div className="absolute left-6 top-2 bottom-2 w-px bg-line sm:left-7">
-          <div
-            ref={lineRef}
-            className="h-full w-full origin-top bg-gradient-to-b from-solar to-green-soft"
-            style={{ transform: "scaleY(0)" }}
-          />
+      <div className="mx-auto grid max-w-[1400px] gap-14 lg:grid-cols-12 lg:gap-8">
+        <div className="lg:col-span-5">
+          <div className="lg:sticky lg:top-36">
+            <p className="label-caps mb-4 text-solar">Como funciona</p>
+            <h2
+              className="font-display text-balance text-text-light"
+              style={{
+                fontSize: "clamp(2rem, 4.4vw, 4rem)",
+                lineHeight: 1.05,
+                letterSpacing: "-0.025em",
+              }}
+            >
+              Tecnologia que transforma luz em resultado.
+            </h2>
+            <p className="mt-6 max-w-sm text-sm leading-relaxed text-text-light/60 sm:text-base">
+              Do primeiro diagnóstico ao acompanhamento da geração, cada etapa
+              é conectada à anterior.
+            </p>
+          </div>
         </div>
 
-        <div className="space-y-16">
-          {STEPS.map((step, i) => (
+        <div ref={timelineRef} className="relative lg:col-span-6 lg:col-start-7">
+          <div className="absolute bottom-2 left-6 top-2 w-px bg-line sm:left-7" aria-hidden="true">
             <div
-              key={step.number}
-              ref={(el) => {
-                stepRefs.current[i] = el;
-              }}
-              className="relative flex gap-6 pl-0 sm:gap-8"
-            >
-              <span className="relative z-10 flex size-12 shrink-0 items-center justify-center rounded-full border border-solar/30 bg-bg-dark text-solar sm:size-14">
-                <step.icon className="size-5 sm:size-6" aria-hidden="true" />
-              </span>
-              <div className="pt-1">
-                <p className="label-caps mb-1 text-text-light/40">
-                  Etapa {step.number}
-                </p>
-                <h3 className="font-display text-xl text-text-light sm:text-2xl">
-                  {step.title}
-                </h3>
-                <p className="mt-2 max-w-md text-sm text-text-light/65 sm:text-base">
-                  {step.description}
-                </p>
+              ref={lineRef}
+              className="h-full w-full origin-top bg-gradient-to-b from-solar to-green-soft"
+            />
+          </div>
+
+          <div className="space-y-14 lg:space-y-20">
+            {STEPS.map((step, i) => (
+              <div
+                key={step.number}
+                ref={(el) => {
+                  stepRefs.current[i] = el;
+                }}
+                className="relative flex gap-5 sm:gap-8"
+              >
+                <span className="relative z-10 flex size-12 shrink-0 items-center justify-center rounded-full border border-solar/30 bg-bg-dark text-solar sm:size-14">
+                  <step.icon className="size-5 sm:size-6" aria-hidden="true" />
+                </span>
+                <div className="pt-1">
+                  <p className="label-caps mb-1 text-text-light/40">Etapa {step.number}</p>
+                  <h3 className="font-display text-xl text-text-light sm:text-2xl lg:text-3xl">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 max-w-md text-sm leading-relaxed text-text-light/65 sm:text-base">
+                    {step.description}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

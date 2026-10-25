@@ -12,6 +12,7 @@ export const sunVertexShader = /* glsl */ `
 export const sunFragmentShader = /* glsl */ `
   uniform float uTime;
   uniform float uIntensity;
+  uniform float uOct;
   uniform vec3 uColorCore;
   uniform vec3 uColorMid;
   uniform vec3 uColorEdge;
@@ -89,6 +90,7 @@ export const sunFragmentShader = /* glsl */ `
     float value = 0.0;
     float amplitude = 0.55;
     for (int i = 0; i < 5; i++) {
+      if (float(i) >= uOct) break;
       value += amplitude * snoise(p);
       p *= 2.05;
       amplitude *= 0.55;
@@ -99,7 +101,7 @@ export const sunFragmentShader = /* glsl */ `
   void main() {
     vec3 p = vPosition * 2.4;
     float flow = fbm(p + vec3(0.0, 0.0, uTime * 0.045));
-    float turbulence = fbm(p * 1.8 - vec3(uTime * 0.02, uTime * 0.03, 0.0));
+    float turbulence = uOct > 3.5 ? fbm(p * 1.8 - vec3(uTime * 0.02, uTime * 0.03, 0.0)) : flow;
 
     float surface = smoothstep(-0.4, 0.9, flow * 0.6 + turbulence * 0.4);
 

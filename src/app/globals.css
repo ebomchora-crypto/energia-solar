@@ -46,7 +46,7 @@
     background: var(--color-bg-dark);
     color: var(--color-text-light);
     font-family: var(--font-sans);
-    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
   }
 
   ::selection {
@@ -163,6 +163,11 @@ html.lenis body {
 
 .lenis.lenis-smooth iframe {
   pointer-events: none;
+}
+
+@keyframes flow-move {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -42,8 +42,9 @@ export default function CtaScene() {
 
   return (
     <section
+      id="contato"
       ref={sectionRef}
-      className="relative overflow-hidden bg-bg-dark px-6 py-32 md:px-14 lg:px-20"
+      className="relative overflow-hidden bg-bg-dark px-6 py-24 sm:px-10 sm:py-32 lg:px-20"
     >
       <div className="absolute inset-0">
         <div ref={imageRef} className="absolute inset-0">
@@ -58,9 +59,9 @@ export default function CtaScene() {
         <div className="absolute inset-0 bg-gradient-to-b from-bg-dark via-bg-dark/75 to-bg-dark" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-4xl text-center">
+      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-12rem)] max-w-4xl flex-col items-center justify-center text-center">
         <p className="label-caps mb-6 text-solar">Vamos começar</p>
-        <h2 className="font-display text-display-xl text-balance text-text-light">
+        <h2 className="font-display text-balance text-text-light" style={{ fontSize: "clamp(3rem, 10.5vw, 9rem)", lineHeight: 0.98, letterSpacing: "-0.04em" }}>
           O próximo
           <br />
           passo é seu.
@@ -69,8 +70,8 @@ export default function CtaScene() {
           Descubra como a energia solar pode transformar seu consumo.
         </p>
 
-        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Button variant="solid" onClick={() => smoothScrollTo("#formulario")}>
+        <div className="mt-10 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4">
+          <Button variant="solid" className="justify-center" onClick={() => smoothScrollTo("#formulario")}>
             Solicitar análise gratuita
           </Button>
           <Button
@@ -79,6 +80,7 @@ export default function CtaScene() {
             target="_blank"
             rel="noopener noreferrer"
             variant="outline"
+            className="justify-center"
             icon={false}
           >
             <MessageCircle className="size-4" aria-hidden="true" />
@@ -87,7 +89,7 @@ export default function CtaScene() {
         </div>
       </div>
 
-      <div id="formulario" className="relative z-10 mx-auto mt-28 max-w-xl scroll-mt-28">
+      <div id="formulario" className="relative z-10 mx-auto mt-16 max-w-xl scroll-mt-24 sm:mt-24">
         <ContactForm />
       </div>
     </section>
@@ -114,7 +116,7 @@ function ContactForm() {
   };
 
   return (
-    <div className="rounded-3xl border border-line-strong bg-bg-dark-raised/80 p-8 sm:p-10">
+    <div className="rounded-3xl border border-line-strong bg-bg-dark-raised/90 p-6 sm:p-10">
       <h3 className="font-display text-2xl text-text-light">
         Solicite sua análise gratuita
       </h3>

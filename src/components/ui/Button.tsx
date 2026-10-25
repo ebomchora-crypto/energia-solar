@@ -39,13 +39,13 @@ export function Button<T extends ElementType = "button">({
     <MagneticAny
       as={as}
       className={cn(
-        "group inline-flex items-center gap-2.5 rounded-full px-7 py-4 text-sm font-medium tracking-tight transition-colors duration-300",
+        "group inline-flex items-center gap-2.5 min-h-12 rounded-full px-7 py-4 text-sm font-medium tracking-tight transition-colors duration-300",
         variantClasses[variant],
         className
       )}
       {...rest}
     >
-      <span>{children}</span>
+      <span className="inline-flex items-center justify-center gap-2.5">{children}</span>
       {icon && (
         <ArrowUpRight
           className="size-4 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"

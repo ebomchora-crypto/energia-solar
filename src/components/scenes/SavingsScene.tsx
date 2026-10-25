@@ -59,7 +59,7 @@ export default function SavingsScene() {
     <section
       id="economia"
       ref={sectionRef}
-      className="relative overflow-hidden bg-bg-light px-6 py-28 text-text-dark md:px-14 lg:px-20"
+      className="relative -mt-px rounded-t-[1.75rem] bg-bg-light px-5 py-20 text-text-dark sm:px-10 sm:py-24 lg:rounded-t-[3rem] lg:px-20 lg:py-32"
     >
       <div
         ref={revealRef}
@@ -67,13 +67,13 @@ export default function SavingsScene() {
       >
         <div className="mx-auto max-w-2xl text-center">
           <p className="label-caps mb-4 text-solar-deep">Simulador de economia</p>
-          <h2 className="font-display text-display-md text-balance">
+          <h2 className="font-display text-balance" style={{ fontSize: "clamp(2rem, 4.6vw, 4rem)", lineHeight: 1.05, letterSpacing: "-0.025em" }}>
             Sua conta de luz pode contar outra história.
           </h2>
         </div>
 
-        <div className="mt-16 grid gap-10 lg:grid-cols-2 lg:gap-16">
-          <div className="space-y-10 rounded-3xl border border-text-dark/10 bg-white/50 p-8 sm:p-10">
+        <div className="mt-12 grid gap-6 sm:mt-16 sm:gap-8 lg:grid-cols-2 lg:gap-10">
+          <div className="space-y-9 rounded-3xl border border-text-dark/10 bg-white/50 p-6 sm:p-10">
             <RangeSlider
               id="bill-slider"
               label="Valor aproximado da sua conta de luz mensal"
@@ -107,7 +107,7 @@ export default function SavingsScene() {
             </div>
           </div>
 
-          <div className="flex flex-col justify-between rounded-3xl bg-text-dark p-8 text-text-light sm:p-10">
+          <div className="flex flex-col justify-between rounded-3xl bg-text-dark p-6 text-text-light sm:p-10">
             <div>
               <div className="mb-8 space-y-3">
                 <BarRow label="Sem energia solar" percent={100} value={bill} tone="muted" />
@@ -122,14 +122,14 @@ export default function SavingsScene() {
               <div className="grid grid-cols-2 gap-6 border-t border-line pt-8">
                 <div>
                   <p className="label-caps text-text-light/50">Economia mensal</p>
-                  <p className="font-display mt-2 text-3xl text-solar sm:text-4xl">
+                  <p className="font-display mt-2 whitespace-nowrap text-[1.75rem] text-solar sm:text-4xl">
                     R${" "}
                     <AnimatedNumber value={monthlySavings} />
                   </p>
                 </div>
                 <div>
                   <p className="label-caps text-text-light/50">Economia em 12 meses</p>
-                  <p className="font-display mt-2 text-3xl text-solar sm:text-4xl">
+                  <p className="font-display mt-2 whitespace-nowrap text-[1.75rem] text-solar sm:text-4xl">
                     R${" "}
                     <AnimatedNumber value={annualSavings} />
                   </p>

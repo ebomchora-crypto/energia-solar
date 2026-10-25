@@ -20,6 +20,7 @@ export const CTA_BACKGROUND = {
 export const GALLERY_PROJECTS = [
   {
     id: "01",
+    position: "60% 50%",
     title: "Residência Litorânea",
     location: "Florianópolis, SC",
     type: "Instalação residencial · 6,4 kWp",
@@ -28,6 +29,7 @@ export const GALLERY_PROJECTS = [
   },
   {
     id: "02",
+    position: "55% 45%",
     title: "Vila Alto Padrão",
     location: "Campinas, SP",
     type: "Sistema premium integrado · 12,8 kWp",
@@ -36,6 +38,7 @@ export const GALLERY_PROJECTS = [
   },
   {
     id: "03",
+    position: "50% 50%",
     title: "Usina Solar Rural",
     location: "Ribeirão Preto, SP",
     type: "Geração em solo · 240 kWp",
@@ -44,6 +47,7 @@ export const GALLERY_PROJECTS = [
   },
   {
     id: "04",
+    position: "50% 88%",
     title: "Cobertura Comercial",
     location: "Belo Horizonte, MG",
     type: "Sistema comercial · 48 kWp",
@@ -52,6 +56,7 @@ export const GALLERY_PROJECTS = [
   },
   {
     id: "05",
+    position: "28% 30%",
     title: "Instalação Especializada",
     location: "Curitiba, PR",
     type: "Equipe técnica em campo",

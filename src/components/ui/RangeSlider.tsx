@@ -29,10 +29,10 @@ export default function RangeSlider({
   return (
     <div>
       <div className="mb-3 flex items-baseline justify-between gap-4">
-        <label htmlFor={id} className="text-sm font-medium">
+        <label htmlFor={id} className="text-sm font-medium leading-snug">
           {label}
         </label>
-        <span className="font-display text-xl tabular-nums text-solar-deep">
+        <span className="font-display shrink-0 whitespace-nowrap text-xl tabular-nums text-solar-deep">
           {valueLabel}
         </span>
       </div>

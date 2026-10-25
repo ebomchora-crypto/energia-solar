@@ -50,6 +50,7 @@ export default function Sun({ progressRef }: SunProps) {
     () => ({
       uTime: { value: 0 },
       uIntensity: { value: 1.0 },
+      uOct: { value: 5 },
       uColorCore: { value: new THREE.Color("#fff3d6") },
       uColorMid: { value: new THREE.Color("#f4c542") },
       uColorEdge: { value: new THREE.Color("#c8651f") },
@@ -64,12 +65,25 @@ export default function Sun({ progressRef }: SunProps) {
     if (materialRef.current) {
       materialRef.current.uniforms.uTime.value = t;
       materialRef.current.uniforms.uIntensity.value = 1.0 + progress * 0.9;
+      // Cheaper surface noise on phones, where the sun fills the whole screen mid-scroll
+      materialRef.current.uniforms.uOct.value = state.size.width < 768 ? 3 : 5;
     }
+
+    // Fit the sun to the viewport: wide screens keep the original framing,
+    // portrait screens pull the camera back and lift the sun above the copy.
+    const aspect = state.size.width / state.size.height;
+    const cam = state.camera as THREE.PerspectiveCamera;
+    const halfTan = Math.tan((cam.fov * Math.PI) / 360);
+    const portrait = aspect < 1;
+    // Portrait: the sun spans <= ~31% of the viewport height so copy never touches it
+    cam.position.z = Math.max(5.2, 1.55 / (aspect * halfTan), portrait ? 2 / (0.62 * halfTan) : 0);
+    const lift = portrait ? 1.0 - Math.min(1, progress * 1.5) : 0;
 
     if (groupRef.current) {
       const scale = 1 + progress * 2.4;
       groupRef.current.scale.setScalar(scale);
       groupRef.current.position.z = progress * 2.2;
+      groupRef.current.position.y = lift * (cam.position.z * halfTan * 0.42);
       groupRef.current.rotation.y = t * 0.03;
     }
 

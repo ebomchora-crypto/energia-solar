@@ -12,48 +12,57 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
   useEffect(() => {
     registerGsap();
 
-    if (reducedMotion) {
-      // Respect the user's preference: plain native scrolling, no Lenis/raf loop.
-      ScrollTrigger.normalizeScroll(false);
-      return;
-    }
-
-    const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 1.1,
-    });
-
-    lenisRef.current = lenis;
-    if (process.env.NODE_ENV !== "production") {
-      // @ts-expect-error debug helper, dev-only
-      window.__lenis = lenis;
-    }
-    lenis.on("scroll", ScrollTrigger.update);
-
-    const tickerCallback = (time: number) => {
-      lenis.raf(time * 1000);
+    let refreshTimer: ReturnType<typeof setTimeout> | undefined;
+    const refreshSoon = () => {
+      clearTimeout(refreshTimer);
+      refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 120);
     };
 
-    gsap.ticker.add(tickerCallback);
-    gsap.ticker.lagSmoothing(0);
+    // Web fonts swap in after first paint and reflow section heights; images
+    // finishing late can too. One debounced refresh once both are stable.
+    if ("fonts" in document) document.fonts.ready.then(refreshSoon);
+    window.addEventListener("load", refreshSoon);
+    window.addEventListener("orientationchange", refreshSoon);
 
-    ScrollTrigger.defaults({ markers: false });
+    let cleanupLenis = () => {};
 
-    // Web fonts (Fraunces in particular) swap in after first paint and can
-    // reflow section heights, desyncing every pinned ScrollTrigger that was
-    // measured before the swap. Re-measure once the real fonts are active.
-    if ("fonts" in document) {
-      document.fonts.ready.then(() => ScrollTrigger.refresh());
+    if (!reducedMotion) {
+      const lenis = new Lenis({
+        duration: 1.15,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        // Touch keeps native momentum scrolling (syncTouch is off by default);
+        // ScrollTrigger still receives every scroll event through Lenis.
+      });
+
+      lenisRef.current = lenis;
+      if (process.env.NODE_ENV !== "production") {
+        // @ts-expect-error debug helper, dev-only
+        window.__lenis = lenis;
+      }
+      lenis.on("scroll", ScrollTrigger.update);
+
+      const tick = (time: number) => lenis.raf(time * 1000);
+      gsap.ticker.add(tick);
+      gsap.ticker.lagSmoothing(0);
+
+      cleanupLenis = () => {
+        gsap.ticker.remove(tick);
+        lenis.destroy();
+        lenisRef.current = null;
+        if (process.env.NODE_ENV !== "production") {
+          // @ts-expect-error debug helper, dev-only
+          window.__lenis = undefined;
+        }
+      };
     }
-    window.addEventListener("load", () => ScrollTrigger.refresh());
 
     return () => {
-      gsap.ticker.remove(tickerCallback);
-      lenis.destroy();
-      lenisRef.current = null;
+      clearTimeout(refreshTimer);
+      window.removeEventListener("load", refreshSoon);
+      window.removeEventListener("orientationchange", refreshSoon);
+      cleanupLenis();
     };
   }, [reducedMotion]);
 
